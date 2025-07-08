@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cute Flower Bouquet</title>
+    <style>
+        body {
+            background: #fff0f6;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            margin-top: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .round-flower {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: #ffe4ec;
+            box-shadow: 0 4px 16px #f8bbd0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .round-flower img {
+            max-width: 160px;
+            max-height: 160px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px #f06292;
+            transition: transform 0.3s;
+        }
+        .cute-message {
+            background: #fff9c4;
+            color: #d81b60;
+            padding: 16px 32px;
+            border-radius: 24px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            box-shadow: 0 2px 8px #f8bbd0;
+            margin-bottom: 24px;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.3s, transform 0.3s;
+            text-align: center;
+        }
+        .cute-message.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .cute-btn {
+            background: linear-gradient(90deg, #f06292, #ba68c8);
+            color: #fff;
+            border: none;
+            border-radius: 32px;
+            padding: 16px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #f8bbd0;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .cute-btn:hover {
+            background: linear-gradient(90deg, #ba68c8, #f06292);
+            transform: scale(1.05);
+        }
+        /* Flower rain effect */
+        .flower-rain {
+            pointer-events: none;
+            position: fixed;
+            left: 0; top: 0;
+            width: 100vw; height: 100vh;
+            z-index: 100;
+        }
+        .flower-drop {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            opacity: 0.85;
+            pointer-events: none;
+            animation: fall 2.5s linear forwards;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-40px) rotate(0deg) scale(1);}
+            100% { transform: translateY(100vh) rotate(360deg) scale(0.7);}
+        }
+    </style>
+</head>
+<body>
+    <div class="cute-message show" style="margin-top:32px; margin-bottom:0; font-size:1.4rem;">
+        🌷 Click the button below to get a cute flower surprise! 🌸
+    </div>
+    <div class="container">
+        <div class="round-flower" id="flowerContainer">
+            <!-- Flower image will appear here -->
+        </div>
+        <div class="cute-message" id="cuteMessage"></div>
+        <button class="cute-btn" id="showBtn">Show me a Flower!</button>
+    </div>
+    <div class="flower-rain" id="flowerRain"></div>
+    <script>
+        // Placeholder flower image URLs
+        const flowerImages = [
+            'https://starrosesandplants.com/app/uploads/2024/04/RubyRed_Blooms_033.jpg?_t=1747143431',
+        'https://www.mondialflowers.com/cdn/Images/romantic-flower-bouquet.jpg',
+        'https://png.pngtree.com/png-vector/20240903/ourmid/pngtree-flower-bouquet-png-image_13740304.png',
+        'https://www.citywideflorist.co.nz/cdn/shop/products/AutumnFlowerBouquet-Small-lifestyle.png?v=1657083373',
+        'https://m.media-amazon.com/images/I/81OXEQrFPTL.jpg',
+        'https://theflowerplant.co.uk/assets/uploads/blog/_width900/All-Pink-Floral-Bouquet.JPG',
+        'https://www.ramsflorists.co.uk/cdn/shop/files/0C0AD256-C6C9-4FC2-92DC-48C0754B5D23.png?v=1741253406',
+        'https://media.istockphoto.com/id/1357509622/photo/flowers-delivery-concept-hand-giving-pastel-flowers-bouquet-to-woman-on-grey-background.jpg?s=612x612&w=0&k=20&c=s0I6jjqvknfdkOsPrQXPHMo99uHoTaeqOlY3vP-n6Jk=',
+        'https://bloomingmore.com/cdn/shop/files/BLPGLUXEPNK_B.jpg?v=1748896667',
+
+        ];
+        // Cute messages
+        const cuteMessages = [
+            "🌸 This is for youu... 💖",
+            "🌷 Sending you a flower hug! 🥰",
+            "🌼 Blooming just for you! ✨",
+            "💐 You deserve all the flowers! 🌟"
+        ];
+
+        const flowerContainer = document.getElementById('flowerContainer');
+        const cuteMessage = document.getElementById('cuteMessage');
+        const showBtn = document.getElementById('showBtn');
+        const flowerRain = document.getElementById('flowerRain');
+
+        function randomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function showFlowerAndMessage() {
+            // Show random flower
+            const imgUrl = randomItem(flowerImages);
+            flowerContainer.innerHTML = `<img src="${imgUrl}" alt="Cute Flower">`;
+
+            // Show random cute message
+            const msg = randomItem(cuteMessages);
+            cuteMessage.textContent = msg;
+            cuteMessage.classList.add('show');
+            setTimeout(() => cuteMessage.classList.remove('show'), 2000);
+
+            // Flower rain effect
+            for (let i = 0; i < 12; i++) {
+                setTimeout(() => {
+                    createFlowerDrop();
+                }, i * 120);
+            }
+        }
+
+        function createFlowerDrop() {
+            const drop = document.createElement('div');
+            drop.className = 'flower-drop';
+            // SVG flower (simple, stylized)
+            drop.innerHTML = `
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+              <g>
+                <circle cx="18" cy="18" r="6" fill="#f06292"/>
+                <ellipse cx="18" cy="7" rx="5" ry="8" fill="#ba68c8" opacity="0.8"/>
+                <ellipse cx="29" cy="18" rx="8" ry="5" fill="#ffd54f" opacity="0.8"/>
+                <ellipse cx="18" cy="29" rx="5" ry="8" fill="#81c784" opacity="0.8"/>
+                <ellipse cx="7" cy="18" rx="8" ry="5" fill="#4fc3f7" opacity="0.8"/>
+              </g>
+            </svg>
+            `;
+            drop.style.left = Math.random() * 95 + 'vw';
+            drop.style.top = '-40px';
+            drop.style.transform = `rotate(${Math.random()*360}deg)`;
+            flowerRain.appendChild(drop);
+            setTimeout(() => {
+            drop.remove();
+            }, 2600);
+        }
+
+        showBtn.addEventListener('click', showFlowerAndMessage);
+    </script>
+</body>
+</html>
